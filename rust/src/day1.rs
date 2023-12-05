@@ -154,7 +154,7 @@ fn part_2(lines: &[String]) -> Vec<u32> {
 }
 
 fn main() -> Result<()> {
-    if let Ok(lines) = read_file("./src/input/day1-1.txt") {
+    if let Ok(lines) = read_file("./src/input/day1.txt") {
         let answer = part_1(&lines);
         let sum: u32 = answer.iter().sum();
         println!("Answer: {sum}");
@@ -162,7 +162,7 @@ fn main() -> Result<()> {
         eprintln!("ERROR: File not found");
     }
 
-    if let Ok(lines) = read_file("./src/input/day1-1.txt") {
+    if let Ok(lines) = read_file("./src/input/day1.txt") {
         let answer = part_2(&lines);
         let sum: u32 = answer.iter().sum();
         println!("Answer: {sum}");
