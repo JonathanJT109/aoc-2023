@@ -48,7 +48,8 @@ fn part_1(lines: &[String]) -> u32 {
                 if !check {
                     check = check_surr(&new_lines, &x, &y);
                 }
-            } else {
+            }
+            if y == line.len() - 1 || !(*letter).is_alphanumeric() {
                 if number > 0 && check {
                     numbers.push(number);
                 }
@@ -72,7 +73,7 @@ fn part_1(lines: &[String]) -> u32 {
 }
 
 fn main() -> Result<()> {
-    if let Ok(file) = read_file("./src/input/day3.txt") {
+    if let Ok(file) = read_file("../day3.txt") {
         let answer = part_1(&file);
         println!("Answer: {}", answer);
     } else {
