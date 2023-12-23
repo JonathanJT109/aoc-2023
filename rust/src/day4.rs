@@ -20,8 +20,8 @@ fn part_1(lines: &Vec<Vec<char>>) -> u32 {
             .collect::<Vec<String>>();
 
         for m in re.find_iter(line[1].as_str()) {
-            let m = m.as_str().parse::<u32>().unwrap();
-            my_num.insert(m);
+            let m = &m.as_str().parse::<u32>().unwrap();
+            my_num.insert(*m);
         }
 
         for win_num in re.find_iter(line[2].as_str()) {
