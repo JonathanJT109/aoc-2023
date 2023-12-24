@@ -13,7 +13,6 @@ fn n_possible(race: &Race) -> usize {
     let mut j = race.time - 1;
     let mut found = [false; 2];
 
-    println!("T: {}, D: {}", race.time, race.distance);
     while i < j && (found[0] == false || found[1] == false) {
         if found[0] == false {
             let i_dist = (race.time - i) * i;
@@ -32,7 +31,6 @@ fn n_possible(race: &Race) -> usize {
             j -= 1;
         }
     }
-    println!("{}, {}", i, j);
 
     j - i + 1
 }
@@ -97,12 +95,12 @@ fn part_2(lines: &[String]) -> usize {
 }
 
 fn main() -> Result<()> {
-    // if let Ok(file) = read_file("./src/input/day6.txt") {
-    //     let answer = part_1(&file);
-    //     println!("Answer: {}", answer);
-    // } else {
-    //     eprintln!("ERROR: File not found");
-    // }
+    if let Ok(file) = read_file("./src/input/day6.txt") {
+        let answer = part_1(&file);
+        println!("Answer: {}", answer);
+    } else {
+        eprintln!("ERROR: File not found");
+    }
 
     if let Ok(file) = read_file("./src/input/day6.txt") {
         let answer = part_2(&file);
