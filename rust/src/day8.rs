@@ -2,6 +2,7 @@ use anyhow::Result;
 use aoc::read_file;
 use regex::Regex;
 use std::collections::HashMap;
+use std::mem;
 
 fn part_1(lines: &[String]) -> usize {
     let instructions = lines[0].as_str().chars().collect::<Vec<char>>();
@@ -68,11 +69,32 @@ fn n_steps(
     steps
 }
 
+fn gcd(a: &usize, b: &usize) -> usize {
+    let mut max = *a;
+    let mut min = *b;
+    if min > max {
+        mem::swap(&mut max, &mut min);
+    }
+    loop {
+        let res = max % min;
+        if res == 0 {
+            return min;
+        }
+        max = min;
+        min = res;
+    }
+}
+
+fn lcm(a: &usize, b: &usize) -> usize {
+    a * b / gcd(a, b)
+}
+
 fn part_2(lines: &[String]) -> usize {
     let instructions = lines[0].as_str().chars().collect::<Vec<char>>();
     let re = Regex::new(r"(\w{3})").unwrap();
     let mut navigation: HashMap<&str, (&str, &str)> = HashMap::new();
     let mut start: Vec<&str> = Vec::new();
+    let mut answer: usize = 1;
 
     for line in &lines[2..] {
         let line = re
@@ -90,7 +112,13 @@ fn part_2(lines: &[String]) -> usize {
     }
 
     println!("{:?}", start);
-    n_steps(&start[1], &navigation, &instructions)
+
+    for i in &start {
+        let a = n_steps(i, &navigation, &instructions);
+        answer = lcm(&answer, &a);
+    }
+
+    answer
 }
 
 fn main() -> Result<()> {
