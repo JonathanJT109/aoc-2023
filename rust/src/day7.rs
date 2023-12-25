@@ -187,14 +187,14 @@ fn main() -> Result<()> {
         let answer = part_1(&file);
         println!("Answer: {answer}");
     } else {
-        eprintln!("Error: File not found")
+        eprintln!("ERROR: File not found")
     }
 
     if let Ok(file) = read_file("./src/input/day7.txt") {
         let answer = part_2(&file);
         println!("Answer: {answer}");
     } else {
-        eprintln!("Error: File not found")
+        eprintln!("ERROR: File not found")
     }
     Ok(())
 }
