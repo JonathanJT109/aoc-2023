@@ -2,6 +2,9 @@ use anyhow::Result;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+// TODO: Create a function that takes a file and test it using two functions (part 1 and 2) and
+// prints the result for both.
+
 // Read the file
 pub fn read_file(file_path: &str) -> Result<Vec<String>, std::io::Error> {
     let file = File::open(file_path)?;
