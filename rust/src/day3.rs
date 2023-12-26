@@ -1,5 +1,7 @@
+use std::usize;
+
 use anyhow::Result;
-use aoc::read_file;
+use aoc::print_answers;
 
 fn check_surr(lines: &Vec<Vec<char>>, x: &usize, y: &usize) -> bool {
     let offsets = [
@@ -31,8 +33,8 @@ fn check_surr(lines: &Vec<Vec<char>>, x: &usize, y: &usize) -> bool {
     false
 }
 
-fn part_1(lines: &[String]) -> u32 {
-    let mut numbers = Vec::<u32>::new();
+fn part_1(lines: &[String]) -> usize {
+    let mut numbers = Vec::<usize>::new();
     let new_lines: Vec<Vec<char>> = lines
         .iter()
         .map(|line| line.chars().collect::<Vec<char>>())
@@ -40,10 +42,10 @@ fn part_1(lines: &[String]) -> u32 {
 
     for (x, line) in new_lines.iter().enumerate() {
         let mut check: bool = false;
-        let mut number: u32 = 0;
+        let mut number: usize = 0;
         for (y, letter) in line.iter().enumerate() {
             if let Some(digit) = letter.to_digit(10) {
-                number = number * 10 + digit;
+                number = number * 10 + digit as usize;
 
                 if !check {
                     check = check_surr(&new_lines, &x, &y);
@@ -69,7 +71,7 @@ fn part_1(lines: &[String]) -> u32 {
 struct Gear {
     x: usize,
     y: usize,
-    numbers: Vec<u32>,
+    numbers: Vec<usize>,
 }
 
 fn is_symbol(
@@ -77,7 +79,7 @@ fn is_symbol(
     x: &isize,
     y1: &usize,
     y2: &usize,
-    number: &u32,
+    number: &usize,
     gears: &mut Vec<Gear>,
 ) {
     let h = lines.len();
@@ -103,7 +105,7 @@ fn is_symbol(
     }
 }
 
-fn part_2(lines: &[String]) -> u32 {
+fn part_2(lines: &[String]) -> usize {
     let mut gears = Vec::<Gear>::new();
     let new_lines: Vec<Vec<char>> = lines
         .iter()
@@ -114,11 +116,11 @@ fn part_2(lines: &[String]) -> u32 {
     for (x, line) in new_lines.iter().enumerate() {
         let mut y = 0;
         while y < width {
-            let mut number = 0;
+            let mut number: usize = 0;
             let start = y;
 
             while y < width && line[y].is_ascii_digit() {
-                let digit = line[y].to_digit(10).unwrap();
+                let digit: usize = line[y].to_digit(10).unwrap() as usize;
                 number = number * 10 + digit;
                 y += 1;
             }
@@ -143,11 +145,11 @@ fn part_2(lines: &[String]) -> u32 {
         }
     }
 
-    let mut answer: u32 = 0;
+    let mut answer: usize = 0;
 
     for gear in &gears {
         if gear.numbers.len() == 2 {
-            answer += gear.numbers.iter().product::<u32>();
+            answer += gear.numbers.iter().product::<usize>();
         }
     }
 
@@ -155,19 +157,7 @@ fn part_2(lines: &[String]) -> u32 {
 }
 
 fn main() -> Result<()> {
-    if let Ok(file) = read_file("./src/input/day3.txt") {
-        let answer = part_1(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
-
-    if let Ok(file) = read_file("./src/input/day3.txt") {
-        let answer = part_2(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
+    print_answers(3, &part_1, &part_2);
 
     Ok(())
 }

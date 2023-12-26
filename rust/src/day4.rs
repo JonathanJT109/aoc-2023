@@ -1,15 +1,18 @@
 use anyhow::Result;
-// use aoc::read_file;
-use aoc::read_file_to_lines;
+use aoc::print_answers;
 use regex::Regex;
 use std::collections::HashSet;
 
-fn part_1(lines: &Vec<Vec<char>>) -> u32 {
+fn part_1(lines: &[String]) -> usize {
     let re = Regex::new(r"\d+").unwrap();
     let mut sum = 0;
+    let lines: Vec<Vec<char>> = lines
+        .iter()
+        .map(|line| line.chars().collect::<Vec<char>>())
+        .collect();
 
     for line in lines {
-        let mut my_num: HashSet<u32> = HashSet::new();
+        let mut my_num: HashSet<usize> = HashSet::new();
         let mut i = 0;
 
         let line = line
@@ -20,30 +23,34 @@ fn part_1(lines: &Vec<Vec<char>>) -> u32 {
             .collect::<Vec<String>>();
 
         for m in re.find_iter(line[1].as_str()) {
-            let m = &m.as_str().parse::<u32>().unwrap();
+            let m = &m.as_str().parse::<usize>().unwrap();
             my_num.insert(*m);
         }
 
         for win_num in re.find_iter(line[2].as_str()) {
-            let win_num = win_num.as_str().parse::<u32>().unwrap();
+            let win_num = win_num.as_str().parse::<usize>().unwrap();
             if my_num.contains(&win_num) {
                 i += 1;
             }
         }
 
         if i > 0 {
-            sum += 2_u32.pow(i - 1);
+            sum += 2_usize.pow(i - 1);
         }
     }
     sum
 }
 
-fn part_2(lines: &Vec<Vec<char>>) -> u32 {
+fn part_2(lines: &[String]) -> usize {
     let re = Regex::new(r"\d+").unwrap();
-    let mut instances: Vec<u32> = vec![1; lines.len()];
+    let mut instances: Vec<usize> = vec![1; lines.len()];
+    let lines: Vec<Vec<char>> = lines
+        .iter()
+        .map(|line| line.chars().collect::<Vec<char>>())
+        .collect();
 
     for (x, line) in lines.iter().enumerate() {
-        let mut my_num: HashSet<u32> = HashSet::new();
+        let mut my_num: HashSet<usize> = HashSet::new();
         let mut i = 0;
 
         let line = line
@@ -54,12 +61,12 @@ fn part_2(lines: &Vec<Vec<char>>) -> u32 {
             .collect::<Vec<String>>();
 
         for m in re.find_iter(line[1].as_str()) {
-            let m = m.as_str().parse::<u32>().unwrap();
+            let m = m.as_str().parse::<usize>().unwrap();
             my_num.insert(m);
         }
 
         for win_num in re.find_iter(line[2].as_str()) {
-            let win_num = win_num.as_str().parse::<u32>().unwrap();
+            let win_num = win_num.as_str().parse::<usize>().unwrap();
             if my_num.contains(&win_num) {
                 i += 1;
             }
@@ -82,19 +89,7 @@ fn part_2(lines: &Vec<Vec<char>>) -> u32 {
 }
 
 fn main() -> Result<()> {
-    if let Ok(file) = read_file_to_lines("./src/input/day4.txt") {
-        let answer = part_1(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
-
-    if let Ok(file) = read_file_to_lines("./src/input/day4.txt") {
-        let answer = part_2(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
+    print_answers(4, &part_1, &part_2);
 
     Ok(())
 }

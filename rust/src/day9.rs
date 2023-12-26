@@ -1,5 +1,5 @@
 use anyhow::Result;
-use aoc::read_file;
+use aoc::print_answers;
 
 fn prediction(sequence: &Vec<isize>, side: &char) -> isize {
     let mut pred_value: isize = 0;
@@ -72,18 +72,6 @@ fn part_2(lines: &[String]) -> isize {
 }
 
 fn main() -> Result<()> {
-    if let Ok(file) = read_file("./src/input/day9.txt") {
-        let answer = part_1(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
-
-    if let Ok(file) = read_file("./src/input/day9.txt") {
-        let answer = part_2(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
+    print_answers(9, &part_1, &part_2);
     Ok(())
 }

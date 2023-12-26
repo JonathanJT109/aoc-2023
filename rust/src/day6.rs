@@ -1,5 +1,5 @@
 use anyhow::Result;
-use aoc::read_file;
+use aoc::print_answers;
 use regex::Regex;
 
 #[derive(Debug)]
@@ -95,19 +95,7 @@ fn part_2(lines: &[String]) -> usize {
 }
 
 fn main() -> Result<()> {
-    if let Ok(file) = read_file("./src/input/day6.txt") {
-        let answer = part_1(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
-
-    if let Ok(file) = read_file("./src/input/day6.txt") {
-        let answer = part_2(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
+    print_answers(6, &part_1, &part_2);
 
     Ok(())
 }

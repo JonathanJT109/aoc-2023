@@ -1,5 +1,5 @@
 use anyhow::Result;
-use aoc::read_file;
+use aoc::print_answers;
 use regex::Regex;
 use std::collections::HashMap;
 use std::mem;
@@ -111,8 +111,6 @@ fn part_2(lines: &[String]) -> usize {
         }
     }
 
-    println!("{:?}", start);
-
     for i in &start {
         let a = n_steps(i, &navigation, &instructions);
         answer = lcm(&answer, &a);
@@ -122,18 +120,6 @@ fn part_2(lines: &[String]) -> usize {
 }
 
 fn main() -> Result<()> {
-    if let Ok(file) = read_file("./src/input/day8.txt") {
-        let answer = part_1(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
-
-    if let Ok(file) = read_file("./src/input/day8.txt") {
-        let answer = part_2(&file);
-        println!("Answer: {}", answer);
-    } else {
-        eprintln!("ERROR: File not found");
-    }
+    print_answers(8, &part_1, &part_2);
     Ok(())
 }

@@ -1,5 +1,5 @@
 use anyhow::Result;
-use aoc::read_file;
+use aoc::print_answers;
 /*
 *
 * 1 a b 8 c e
@@ -13,8 +13,8 @@ use aoc::read_file;
 *     -
 */
 
-fn part_1(lines: &[String]) -> Vec<u32> {
-    let mut result = Vec::<u32>::new();
+fn part_1(lines: &[String]) -> usize {
+    let mut result = Vec::<usize>::new();
 
     for line in lines {
         let mut a: usize = 0;
@@ -31,8 +31,8 @@ fn part_1(lines: &[String]) -> Vec<u32> {
             }
 
             if text[a].is_ascii_digit() && text[b].is_ascii_digit() {
-                let mut number = text[a] as u32 - '0' as u32;
-                number = number * 10 + text[b] as u32 - '0' as u32;
+                let mut number = text[a] as usize - '0' as usize;
+                number = number * 10 + text[b] as usize - '0' as usize;
                 result.push(number);
 
                 break;
@@ -40,13 +40,13 @@ fn part_1(lines: &[String]) -> Vec<u32> {
         }
     }
 
-    result
+    result.iter().sum()
 }
 
 // Combini ng the first didgit and the last digit -> single two-digit number
 // one two three four five six seven nine
 
-fn part_2(lines: &[String]) -> Vec<u32> {
+fn part_2(lines: &[String]) -> usize {
     let mut result = Vec::<String>::new();
 
     for line in lines {
@@ -154,20 +154,6 @@ fn part_2(lines: &[String]) -> Vec<u32> {
 }
 
 fn main() -> Result<()> {
-    if let Ok(lines) = read_file("./src/input/day1.txt") {
-        let answer = part_1(&lines);
-        let sum: u32 = answer.iter().sum();
-        println!("Answer: {sum}");
-    } else {
-        eprintln!("ERROR: File not found");
-    }
-
-    if let Ok(lines) = read_file("./src/input/day1.txt") {
-        let answer = part_2(&lines);
-        let sum: u32 = answer.iter().sum();
-        println!("Answer: {sum}");
-    } else {
-        eprintln!("ERROR: File not found");
-    }
+    print_answers(1, &part_1, &part_2);
     Ok(())
 }
