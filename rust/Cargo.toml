@@ -12,6 +12,10 @@ path = "src/lib.rs"
 
 # Reference: https://www.youtube.com/watch?v=G3JDYAiX5PU&t=131s
 [[bin]]
+name = "day15"
+path = "src/day15.rs"
+
+[[bin]]
 name = "day14"
 path = "src/day14.rs"
 
