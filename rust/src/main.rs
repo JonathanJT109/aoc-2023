@@ -30,8 +30,6 @@ fn fibonacci_sequence(n: &u32) -> Vec<u32> {
 }
 
 fn main() {
-    // TODO: print() error
-
     println!("Please enter some number: ");
     let mut user_response = String::new();
 

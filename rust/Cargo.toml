@@ -12,6 +12,46 @@ path = "src/lib.rs"
 
 # Reference: https://www.youtube.com/watch?v=G3JDYAiX5PU&t=131s
 [[bin]]
+name = "day25"
+path = "src/day25.rs"
+
+[[bin]]
+name = "day24"
+path = "src/day24.rs"
+
+[[bin]]
+name = "day23"
+path = "src/day23.rs"
+
+[[bin]]
+name = "day22"
+path = "src/day22.rs"
+
+[[bin]]
+name = "day21"
+path = "src/day21.rs"
+
+[[bin]]
+name = "day20"
+path = "src/day20.rs"
+
+[[bin]]
+name = "day19"
+path = "src/day19.rs"
+
+[[bin]]
+name = "day18"
+path = "src/day18.rs"
+
+[[bin]]
+name = "day17"
+path = "src/day17.rs"
+
+[[bin]]
+name = "day16"
+path = "src/day16.rs"
+
+[[bin]]
 name = "day15"
 path = "src/day15.rs"
 
