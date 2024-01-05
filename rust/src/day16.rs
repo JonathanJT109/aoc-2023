@@ -1,7 +1,9 @@
 use anyhow::Result;
-use aoc::testing;
+use aoc::print_answers;
+use std::collections::HashSet;
+use std::hash::{Hash, Hasher};
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 enum Direction {
     Up,
     Down,
@@ -9,8 +11,41 @@ enum Direction {
     Left,
 }
 
-fn energized(tiles: &[Vec<char>]) -> usize {
-    tiles
+impl Direction {
+    fn clockwise(&mut self) {
+        *self = match *self {
+            Direction::Up => Direction::Right,
+            Direction::Down => Direction::Left,
+            Direction::Right => Direction::Down,
+            Direction::Left => Direction::Up,
+        }
+    }
+    fn counterclockwise(&mut self) {
+        *self = match *self {
+            Direction::Up => Direction::Left,
+            Direction::Down => Direction::Right,
+            Direction::Right => Direction::Up,
+            Direction::Left => Direction::Down,
+        }
+    }
+}
+
+impl Hash for Direction {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        (*self as u8).hash(state);
+    }
+}
+
+fn clear_visited(visited: &mut [Vec<char>]) {
+    for l in visited {
+        for c in l {
+            *c = '.';
+        }
+    }
+}
+
+fn energized(tiles: &mut [Vec<char>]) -> usize {
+    let sum = tiles
         .iter()
         .map(|file| {
             file.iter()
@@ -18,92 +53,102 @@ fn energized(tiles: &[Vec<char>]) -> usize {
                 .collect::<Vec<_>>()
                 .len()
         })
-        .sum()
+        .sum();
+    clear_visited(tiles);
+    sum
 }
 
-fn clockwise(dir: Direction) -> Direction {
-    match dir {
-        Direction::Up => Direction::Right,
-        Direction::Down => Direction::Left,
-        Direction::Right => Direction::Down,
-        Direction::Left => Direction::Up,
-    }
-}
-fn counterclockwise(dir: Direction) -> Direction {
-    match dir {
-        Direction::Up => Direction::Left,
-        Direction::Down => Direction::Right,
-        Direction::Right => Direction::Up,
-        Direction::Left => Direction::Down,
+fn next_coor(x: &mut isize, y: &mut isize, dir: &mut Direction) {
+    (*x, *y, *dir) = match dir {
+        Direction::Up => (*x - 1, *y, *dir),
+        Direction::Down => (*x + 1, *y, *dir),
+        Direction::Right => (*x, *y + 1, *dir),
+        Direction::Left => (*x, *y - 1, *dir),
     }
 }
 
-fn next_coor(x: isize, y: isize, dir: Direction) -> (isize, isize, Direction) {
-    match dir {
-        Direction::Up => (x - 1, y, dir),
-        Direction::Down => (x + 1, y, dir),
-        Direction::Right => (x, y + 1, dir),
-        Direction::Left => (x, y - 1, dir),
-    }
-}
-
-fn beam(tiles: &mut [Vec<char>], x: isize, y: isize, dir: Direction) {
-    if (x < 0 || x as usize >= tiles.len()) || (y < 0 || y as usize >= tiles.len()) {
-        return;
-    }
-
-    let tile = &mut tiles[x as usize][y as usize];
-
-    match *tile {
-        '.' | '#' => {
-            *tile = '#';
-            let next = next_coor(x, y, dir);
-            beam(tiles, next.0, next.1, next.2);
-        }
-        '|' => {
-            if dir == Direction::Up || dir == Direction::Down {
-                let next = next_coor(x, y, dir);
-                beam(tiles, next.0, next.1, next.2);
-            } else {
-                beam(tiles, x - 1, y, Direction::Up);
-                beam(tiles, x + 1, y, Direction::Down);
+fn beam(
+    tiles: &[Vec<char>],
+    x: &mut isize,
+    y: &mut isize,
+    dir: &mut Direction,
+    visited: &mut [Vec<char>],
+    seen: &mut HashSet<(usize, usize, Direction)>,
+) {
+    while (*x >= 0 && (*x as usize) < tiles.len()) && (*y >= 0 && (*y as usize) < tiles[0].len()) {
+        match tiles[*x as usize][*y as usize] {
+            '|' => {
+                if let None = seen.get(&(*x as usize, *y as usize, *dir)) {
+                    seen.insert((*x as usize, *y as usize, *dir));
+                } else {
+                    return;
+                }
+                if *dir == Direction::Left || *dir == Direction::Right {
+                    visited[*x as usize][*y as usize] = '#';
+                    beam(
+                        tiles,
+                        &mut (*x - 1),
+                        &mut (*y).clone(),
+                        &mut Direction::Up,
+                        visited,
+                        seen,
+                    );
+                    beam(
+                        tiles,
+                        &mut (*x + 1),
+                        &mut (*y).clone(),
+                        &mut Direction::Down,
+                        visited,
+                        seen,
+                    );
+                    return;
+                }
             }
-        }
-        '-' => {
-            if dir == Direction::Left || dir == Direction::Right {
-                let next = next_coor(x, y, dir);
-                beam(tiles, next.0, next.1, next.2);
+            '-' => {
+                if let None = seen.get(&(*x as usize, *y as usize, *dir)) {
+                    seen.insert((*x as usize, *y as usize, *dir));
+                } else {
+                    return;
+                }
+                if *dir == Direction::Up || *dir == Direction::Down {
+                    visited[*x as usize][*y as usize] = '#';
+                    beam(
+                        tiles,
+                        &mut (*x).clone(),
+                        &mut (*y + 1),
+                        &mut Direction::Right,
+                        visited,
+                        seen,
+                    );
+                    beam(
+                        tiles,
+                        &mut (*x).clone(),
+                        &mut (*y - 1),
+                        &mut Direction::Left,
+                        visited,
+                        seen,
+                    );
+                    return;
+                }
             }
-            beam(tiles, x, y - 1, Direction::Left);
-            beam(tiles, x, y + 1, Direction::Right);
-        }
-        '/' => {
-            if dir == Direction::Up || dir == Direction::Down {
-                let dir = clockwise(dir);
-                let next = next_coor(x, y, dir);
-                *tile = '#';
-                beam(tiles, next.0, next.1, next.2);
-            } else {
-                let dir = counterclockwise(dir);
-                let next = next_coor(x, y, dir);
-                *tile = '#';
-                beam(tiles, next.0, next.1, next.2);
+            '/' => {
+                if *dir == Direction::Up || *dir == Direction::Down {
+                    (*dir).clockwise();
+                } else {
+                    (*dir).counterclockwise();
+                }
             }
-        }
-        '\\' => {
-            if dir == Direction::Up || dir == Direction::Down {
-                let dir = counterclockwise(dir);
-                let next = next_coor(x, y, dir);
-                *tile = '#';
-                beam(tiles, next.0, next.1, next.2);
-            } else {
-                let dir = clockwise(dir);
-                let next = next_coor(x, y, dir);
-                *tile = '#';
-                beam(tiles, next.0, next.1, next.2);
+            '\\' => {
+                if *dir == Direction::Up || *dir == Direction::Down {
+                    (*dir).counterclockwise();
+                } else {
+                    (*dir).clockwise();
+                }
             }
+            _ => (),
         }
-        _ => (),
+        visited[*x as usize][*y as usize] = '#';
+        next_coor(x, y, dir);
     }
 }
 
@@ -112,17 +157,80 @@ fn part_1(lines: &[String]) -> usize {
         .iter()
         .map(|line| line.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
+    let mut visited = vec![vec!['.'; lines.len()]; lines[0].len()];
+    let mut seen: HashSet<(usize, usize, Direction)> = HashSet::new();
 
-    beam(&mut lines, 0, 0, Direction::Right);
-    println!();
-    for line in &lines {
-        println!("{}", line.iter().collect::<String>());
+    beam(
+        &mut lines,
+        &mut 0,
+        &mut 0,
+        &mut Direction::Right,
+        &mut visited,
+        &mut seen,
+    );
+
+    energized(&mut visited)
+}
+
+fn part_2(lines: &[String]) -> usize {
+    let lines = lines
+        .iter()
+        .map(|line| line.chars().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let mut visited = vec![vec!['.'; lines.len()]; lines[0].len()];
+    let mut max_n: usize = 0;
+
+    for mut x in 0..lines.len() as isize {
+        let mut seen: HashSet<(usize, usize, Direction)> = HashSet::new();
+        beam(
+            &lines,
+            &mut x,
+            &mut 0,
+            &mut Direction::Right,
+            &mut visited,
+            &mut seen,
+        );
+        max_n = max_n.max(energized(&mut visited));
+        seen.clear();
+
+        beam(
+            &lines,
+            &mut x,
+            &mut (lines[0].len() as isize - 1),
+            &mut Direction::Left,
+            &mut visited,
+            &mut seen,
+        );
+        max_n = max_n.max(energized(&mut visited));
     }
 
-    energized(&lines)
+    for mut y in 0..lines[0].len() as isize {
+        let mut seen: HashSet<(usize, usize, Direction)> = HashSet::new();
+        beam(
+            &lines,
+            &mut 0,
+            &mut y,
+            &mut Direction::Down,
+            &mut visited,
+            &mut seen,
+        );
+        max_n = max_n.max(energized(&mut visited));
+        seen.clear();
+
+        beam(
+            &lines,
+            &mut (lines.len() as isize - 1),
+            &mut y,
+            &mut Direction::Up,
+            &mut visited,
+            &mut seen,
+        );
+        max_n = max_n.max(energized(&mut visited));
+    }
+    max_n
 }
 
 fn main() -> Result<()> {
-    testing(16, &part_1, 46);
+    print_answers(16, &part_1, &part_2);
     Ok(())
 }
