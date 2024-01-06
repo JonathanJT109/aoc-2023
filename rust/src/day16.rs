@@ -1,9 +1,8 @@
 use anyhow::Result;
 use aoc::print_answers;
 use std::collections::HashSet;
-use std::hash::{Hash, Hasher};
 
-#[derive(PartialEq, Eq, Clone, Copy)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash)]
 enum Direction {
     Up,
     Down,
@@ -27,12 +26,6 @@ impl Direction {
             Direction::Right => Direction::Up,
             Direction::Left => Direction::Down,
         }
-    }
-}
-
-impl Hash for Direction {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        (*self as u8).hash(state);
     }
 }
 
