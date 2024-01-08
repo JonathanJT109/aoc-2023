@@ -2,6 +2,8 @@ use anyhow::Result;
 use aoc::print_answers;
 use std::collections::{BinaryHeap, HashMap};
 
+// TODO: Test the algorithm with sets
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Direction {
     Up = 0,

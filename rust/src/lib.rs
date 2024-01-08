@@ -41,7 +41,7 @@ pub fn testing<T: Debug + Eq>(day: usize, part_1: &dyn Fn(&[String]) -> T, solut
     let input_file: &str = input_file.as_str();
     if let Ok(file) = read_file(input_file) {
         let answer = part_1(&file);
-        println!("Output: {:?}", answer);
+        println!("\nOutput: {:?}", answer);
         if answer == solution {
             println!("TEST PASSED");
             return true;
@@ -49,6 +49,9 @@ pub fn testing<T: Debug + Eq>(day: usize, part_1: &dyn Fn(&[String]) -> T, solut
     } else {
         eprintln!("ERROR: File not found");
     }
+    println!("---------------");
     eprintln!("TEST FAILED");
+    eprintln!("EXPECTED: {:?}", solution);
+    println!("---------------");
     false
 }
