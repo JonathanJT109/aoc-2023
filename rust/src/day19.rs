@@ -13,32 +13,32 @@ impl Workflow {
     fn new(x: usize, m: usize, a: usize, s: usize) -> Self {
         Self { x, m, a, s }
     }
-}
 
-fn parse(lines: &[String]) -> Vec<Workflow> {
-    lines[1]
-        .split('\n')
-        .map(|line| {
-            let line = line
-                .trim_matches('{')
-                .trim_matches('}')
-                .split(',')
-                .collect::<Vec<_>>();
-            let mut workflow = Workflow::new(0, 0, 0, 0);
-            for pair in line {
-                let pair: Vec<&str> = pair.split('=').collect();
-                if let [key, value] = pair.as_slice() {
-                    match *key {
-                        "x" => workflow.x = value.parse::<usize>().unwrap(),
-                        "m" => workflow.m = value.parse::<usize>().unwrap(),
-                        "a" => workflow.a = value.parse::<usize>().unwrap(),
-                        _ => workflow.s = value.parse::<usize>().unwrap(),
+    fn parse(lines: &[String]) -> Vec<Workflow> {
+        lines[1]
+            .split('\n')
+            .map(|line| {
+                let line = line
+                    .trim_matches(|c| c == '{' || c == '}')
+                    .split(',')
+                    .collect::<Vec<_>>();
+                let mut workflow = Self::new(0, 0, 0, 0);
+                for pair in line {
+                    let pair: Vec<&str> = pair.split('=').collect();
+                    if let [key, value] = pair.as_slice() {
+                        let value = value.parse::<usize>().unwrap();
+                        match *key {
+                            "x" => workflow.x = value,
+                            "m" => workflow.m = value,
+                            "a" => workflow.a = value,
+                            _ => workflow.s = value,
+                        }
                     }
                 }
-            }
-            workflow
-        })
-        .collect()
+                workflow
+            })
+            .collect()
+    }
 }
 
 fn part_1(lines: &[String]) -> usize {
@@ -47,6 +47,8 @@ fn part_1(lines: &[String]) -> usize {
         .split("\n\n")
         .map(|a| a.to_string())
         .collect::<Vec<_>>();
+
+    let workflows = Workflow::parse(&lines);
 
     for workflow in &workflows {
         println!("{:?}", workflow);
