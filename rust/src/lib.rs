@@ -27,10 +27,25 @@ pub fn print_answers<T: Debug>(
     let input_file: &str = input_file.as_str();
     if let Ok(file) = read_file(input_file) {
         let answer = part_1(&file);
-        println!("Answer (part 1): {:?}", answer);
+        let now = std::time::Instant::now();
+        println!("\n{:-<25}", "");
+        println!(
+            "Day {} - Part 1\nAnswer: {:?}\nTime:\t{:?}",
+            day,
+            answer,
+            now.elapsed()
+        );
 
+        let now = std::time::Instant::now();
         let answer = part_2(&file);
-        println!("Answer (part 2): {:?}", answer);
+        println!("{:-<25}", "");
+        println!(
+            "Day {} - Part 2\nAnswer: {:?}\nTime:\t{:#?}",
+            day,
+            answer,
+            now.elapsed()
+        );
+        println!("{:-<25}\n", "");
     } else {
         eprintln!("ERROR: File not found");
     }
